@@ -14,37 +14,42 @@ namespace MauiAppTempoAgora
         {
             try
             {
-                if (!string.IsNullOrEmpty(txt_cidade.Text))
+                lbl_erro.IsVisible = false;
+                lbl_res.Text = "Carregando...";
+
+                if (!string.IsNullOrWhiteSpace(txt_cidade.Text))
                 {
                     Tempo? t = await DataService.GetPrevisao(txt_cidade.Text);
 
                     if (t != null)
                     {
-                        string dados_previsao =
-                            $"🌍 Coordinates: {t.Lat:N2}°N, {t.Lon:N2}°E\n" +
-                            $"🌅 Sunrise: {t.Sunrise}\n" +
-                            $"🌇 Sunset: {t.Sunset}\n" +
-                            $"🌡️ Max Temp: {t.TempMax}°C\n" +
-                            $"❄️ Min Temp: {t.TempMin}°C\n" +
-                            $"🌬️ Wind Speed: {t.Speed} m/s\n" +
-                            $"👀 Visibility: {t.Visibility} meters\n" +
-                            $"☁️ Condition: {t.Main} ({t.Description})";
-
-                        lbl_res.Text = dados_previsao;
+                        lbl_res.Text = $"🌍 Latitude: {t.Lat}\n" +
+                                       $"🌍 Longitude: {t.Lon}\n" +
+                                       $"🌅 Nascer do Sol: {t.Sunrise}\n" +
+                                       $"🌇 Pôr do Sol: {t.Sunset}\n" +
+                                       $"🌡️ Temp Máx: {t.TempMax}°C\n" +
+                                       $"🌡️ Temp Min: {t.TempMin}°C\n" +
+                                       $"☁️ Descrição do Clima: {t.Description}\n" +
+                                       $"💨 Velocidade do Vento: {t.Speed} m/s\n" +
+                                       $"👀 Visibilidade: {t.Visibility} metros";
                     }
                     else
                     {
-                        lbl_res.Text = "No weather data found for this city.";
+                        lbl_res.Text = "Sem dados de previsão.";
                     }
                 }
                 else
                 {
-                    lbl_res.Text = "Please enter a city name.";
+                    lbl_erro.Text = "Preencha a cidade.";
+                    lbl_erro.IsVisible = true;
+                    lbl_res.Text = "";
                 }
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Error", ex.Message, "OK");
+                lbl_erro.Text = ex.Message;
+                lbl_erro.IsVisible = true;
+                lbl_res.Text = "";
             }
         }
     }
